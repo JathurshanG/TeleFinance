@@ -9,6 +9,7 @@ class DailyRecap:
     
     def get_history(self):
         data = self.data
+        data["date"] = pd.to_datetime(data['date'])        
         allHistorical =[]
         for i,idx in enumerate(data['asset']):
             ticker = yf.Ticker(idx)
@@ -17,7 +18,9 @@ class DailyRecap:
             hist['ticket'] = idx
             hist['Date'] = hist['Date'].dt.date
             allHistorical.append(hist)
-        allHistorical = pd.concat(allHistorical)
+
+        allHistorical = pd.concat(allHistorical,ignore_index=True)
+        allHistorical.to_csv('files/History.csv',index=False,sep=",")
         return allHistorical
 
 if __name__ == "__main__":
