@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 
 #myFiles.
-files/History.csv
+*.csv
