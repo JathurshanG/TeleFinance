@@ -23,6 +23,11 @@ class DailyRecap:
             hist.loc[hist['Date']==data['date'][i],"EntryDate"] = True
             allHistorical.append(hist)
         allHistorical = pd.concat(allHistorical,ignore_index=True)
+        getMaxDate = allHistorical.groupby(['ticket'], as_index=False).agg({"Date": "max"})
+        getMaxDate.rename(columns={"Date": "maxDate"}, inplace=True)
+        allHistorical = allHistorical.merge(getMaxDate, how="left", on="ticket")
+        allHistorical.loc[allHistorical['Date'] == allHistorical['maxDate'],"LatestDate"] = True
+        allHistorical.drop(columns=['maxDate'],inplace=True)
         allHistorical.to_csv('files/History.csv',index=False,sep=",")
         return allHistorical
     
