@@ -3,16 +3,15 @@ import pandas as pd
 import plotly.express as px
 
 # Chargement des données
-histo = pd.read_csv('files\History.csv')
+histo = pd.read_csv(r'files\History.csv')
 histo["Date"] = pd.to_datetime(histo['Date'])
 
-basicInfo = pd.read_csv('files\informations.csv')
+basicInfo = pd.read_csv(r'files\informations.csv')
 basicInfo['compte'] = 1
 basicInfo.loc[basicInfo['market'].str.contains('us_', na=False), 'Marché'] = "United States"
 basicInfo.loc[basicInfo['market'].str.contains('fr_', na=False), 'Marché'] = "France"
 
 # Calcul des KPI
-valeur_portefeuille = round(histo[histo['Date'] == histo['Date'].max()]['price'].sum(), 2)
 nb_actifs = len(basicInfo)
 nb_secteurs = basicInfo['sector'].nunique()
 part_us = round(
@@ -30,12 +29,12 @@ monthly = monthly[monthly['Date'] == monthly['DateEnd']]
 
 # Configuration de la page
 st.set_page_config(page_title="Daily Recap", page_icon="📈", layout="wide")
-st.title("📊 Daily Recap")
+st.title(f"Daily Recap on {(histo['Date'].dt.date.max())}")
 
 # 🧮 KPIs pleine largeur
 kpi1, kpi2, kpi3, kpi4,kpi5 = st.columns(5)
 with kpi1:
-    st.metric("💰 Valorisation totale", f"$ {valeur_portefeuille:,.2f}", delta=variation)
+    st.metric("💰 Valorisation totale", f"$ {ValFini:,.2f}", delta=variation)
 with kpi2:
     st.metric("📦 Actifs détenus", f"{nb_actifs}")
 with kpi3:
@@ -45,12 +44,24 @@ with kpi4:
 with kpi5:
     st.metric("📉 Rendement/actif", f" $ {rendement_moyen:,.2f}")
 
+col_lost,col_line = st.columns([2,5])
 
-# 📈 Graphique d'évolution + pie charts
-st.subheader("Évolution journalière du portefeuille")
-getHist = monthly.groupby('Date', as_index=False).agg({"price": "sum"})
-fig_line = px.line(getHist,'Date','price',range_y=[getHist['price'].min() - 5, getHist['price'].max() +5])
-st.plotly_chart(fig_line)
+with col_lost :
+   st.subheader('Tableau Recap')
+   priceless = ['shorName','sector','ticker']
+   prix = basicInfo[priceless]
+   prix = prix.merge(histo[histo['LatestDate']==True][['price','ticket']],how="left",right_on='ticket',left_on='ticker').rename(columns={"price":'Actual Price'})
+   prix = prix.merge(histo[histo['EntryDate']==True][['price','ticket']],how="left",on="ticket").rename(columns={"price":'Investment'}).drop(columns=['ticket','ticker'])
+   prix['Actual Price'] = prix['Actual Price'].apply(lambda x : round(x,2))
+   prix['Variation'] = round(((prix['Actual Price']/prix['Investment']) -1)*100,2)
+   st.dataframe(prix.sort_values(by='Variation'),hide_index=True)
+
+with col_line :
+    # 📈 Graphique d'évolution + pie charts
+    st.subheader("Évolution journalière du portefeuille")
+    getHist = monthly.groupby('Date', as_index=False).agg({"price": "sum"})
+    fig_line = px.line(getHist,'Date','price',range_y=[getHist['price'].min() - 5, getHist['price'].max() +5])
+    st.plotly_chart(fig_line)
 
 # 🥧 Répartition sectorielle et géographique
 col_pie1, col_pie2, col_bar = st.columns(3)
