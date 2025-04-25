@@ -24,7 +24,9 @@ variation = round((ValFini - Val) / Val * 100, 2)
 gain_latent = round(ValFini - Val, 2)
 rendement_moyen = round((ValFini - Val) / nb_actifs, 2)
 
-
+monthly = histo.copy()
+monthly['DateEnd'] = pd.to_datetime(histo['Date'],format="%Y%m") + pd.tseries.offsets.MonthEnd(0)
+monthly = monthly[monthly['Date'] == monthly['DateEnd']]
 
 # Configuration de la page
 st.set_page_config(page_title="Daily Recap", page_icon="📈", layout="wide")
@@ -46,9 +48,9 @@ with kpi5:
 
 # 📈 Graphique d'évolution + pie charts
 st.subheader("Évolution journalière du portefeuille")
-getHist = histo.groupby('Date', as_index=False).agg({"price": "sum"})
-st.line_chart(getHist, x="Date", y="price")
-
+getHist = monthly.groupby('Date', as_index=False).agg({"price": "sum"})
+fig_line = px.line(getHist,'Date','price',range_y=[getHist['price'].min() - 5, getHist['price'].max() +5])
+st.plotly_chart(fig_line)
 
 # 🥧 Répartition sectorielle et géographique
 col_pie1, col_pie2, col_bar = st.columns(3)
