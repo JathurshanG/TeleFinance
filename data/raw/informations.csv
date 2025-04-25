@@ -1,0 +1,10 @@
+ticker,shortName,sector,currency,market
+MC.PA,LVMH,Consumer Cyclical,EUR,fr_market
+TTE,TotalEnergies SE,Energy,USD,us_market
+MDT,Medtronic plc.,Healthcare,USD,us_market
+CRM,"Salesforce, Inc.",Technology,USD,us_market
+CLSK,"CleanSpark, Inc.",Financial Services,USD,us_market
+COIN,"Coinbase Global, Inc.",Financial Services,USD,us_market
+NVDA,NVIDIA Corporation,Technology,USD,us_market
+PYPL,"PayPal Holdings, Inc.",Financial Services,USD,us_market
+SNY,Sanofi,Healthcare,USD,us_market
