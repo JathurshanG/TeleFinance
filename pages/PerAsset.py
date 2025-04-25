@@ -20,7 +20,7 @@ st.title("Par Actif")
 ss = st.selectbox('Choose Your Asset',options= basicInfo['shortName'].unique())
 infomation = basicInfo[basicInfo['shortName']==ss]
 ticker = infomation['ticker'].iloc[0]
-historiquePerAsset = histo[histo['ticket']==ticker]
+historiquePerAsset = histo[histo['ticket']==ticker].dropna(subset="price")
 
 kpi1,kpi2,kpi4,kpi5,kpi3 = st.columns(5)
 latest = histo[(histo['ticket']==ticker) & histo['LatestDate']==True]["price"].sum()

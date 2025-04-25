@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 # Chargement des données
-histo = pd.read_csv('data/raw/History.csv')
+histo = pd.read_csv('data/raw/History.csv').dropna(subset='price')
 histo["Date"] = pd.to_datetime(histo['Date'])
 
 basicInfo = pd.read_csv('data/raw/informations.csv')
