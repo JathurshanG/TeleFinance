@@ -44,16 +44,17 @@ with kpi4:
 with kpi5:
     st.metric("📉 Rendement/actif", f" $ {rendement_moyen:,.2f}")
 
-col_lost,col_line = st.columns([2,5])
+col_lost,col_line = st.columns([3,4])
 
 with col_lost :
    st.subheader('Tableau Recap')
-   priceless = ['shorName','sector','ticker']
+   priceless = ['shorName','ticker']
    prix = basicInfo[priceless]
    prix = prix.merge(histo[histo['LatestDate']==True][['price','ticket']],how="left",right_on='ticket',left_on='ticker').rename(columns={"price":'Actual Price'})
    prix = prix.merge(histo[histo['EntryDate']==True][['price','ticket']],how="left",on="ticket").rename(columns={"price":'Investment'}).drop(columns=['ticket','ticker'])
    prix['Actual Price'] = prix['Actual Price'].apply(lambda x : round(x,2))
    prix['Variation'] = round(((prix['Actual Price']/prix['Investment']) -1)*100,2)
+   prix = prix.rename(columns={"shortName":"Company Name"})
    st.dataframe(prix.sort_values(by='Variation'),hide_index=True)
 
 with col_line :
