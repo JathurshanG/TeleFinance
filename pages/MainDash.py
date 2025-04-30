@@ -25,7 +25,7 @@ rendement_moyen = round((ValFini - Val) / nb_actifs, 2)
 
 monthly = histo.copy()
 monthly['DateEnd'] = pd.to_datetime(histo['Date'],format="%Y%m") + pd.tseries.offsets.MonthEnd(0)
-monthly = monthly[monthly['Date'] == monthly['DateEnd']]
+monthly = monthly[(monthly['Date'] == monthly['DateEnd'])| (monthly['LatestDate']==True)]
 
 # Configuration de la page
 st.set_page_config(page_title="Daily Recap", page_icon="📊", layout="wide")
