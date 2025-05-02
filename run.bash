@@ -1,3 +1,3 @@
 source .venv/Scripts/activate
-python script/__main__.py
+python3 script/__main__.py
 streamlit run Home.py
