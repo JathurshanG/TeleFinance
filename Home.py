@@ -30,7 +30,7 @@ with st.container():
         f"""
         📅 **Date** : {datetime.now().strftime('%d/%m/%Y')}  
         📈 **Dernière mise à jour** : {(datetime.now().strftime('%H:%M'))}
-        
+        sour
         _Utilise le menu latéral (à gauche) pour naviguer entre les sections._
         """
     )
