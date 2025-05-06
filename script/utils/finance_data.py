@@ -4,7 +4,7 @@ import pandas as pd
 def fetch_history(asset: str, start_date: pd.Timestamp, initial_price: float) -> pd.DataFrame:
     ticker = yf.Ticker(asset)
     hist = ticker.history(start="2001-01-01").reset_index()
-    hist = hist[['Date', 'Close']]
+    hist = hist[['Date', 'Close','Volume']]
     hist['ticket'] = asset
     hist['Date'] = hist['Date'].dt.date
     intial_ratio = initial_price / hist.loc[hist['Date'] == start_date.date(), 'Close'].iloc[0]
