@@ -3,10 +3,10 @@ import pandas as pd
 import plotly.express as px
 
 # Chargement des données
-histo = pd.read_csv('data/raw/History.csv').dropna(subset='price')
+histo = pd.read_csv('https://github.com/JathurshanG/TeleFinance/blob/master/data/raw/History.csv?raw=true').dropna(subset='price')
 histo["Date"] = pd.to_datetime(histo['Date'])
 
-basicInfo = pd.read_csv('data/raw/informations.csv')
+basicInfo = pd.read_csv('https://github.com/JathurshanG/TeleFinance/blob/master/data/raw/informations.csv?raw=true')
 basicInfo['compte'] = 1
 basicInfo.loc[basicInfo['market'].str.contains('us_', na=False), 'Marché'] = "United States"
 basicInfo.loc[basicInfo['market'].str.contains('fr_', na=False), 'Marché'] = "France"
