@@ -1,10 +1,9 @@
-name: Run Project
+name: Run Daily at 16h Paris
 
 on:
-  push:
-    branches:
-      - master  # ou 'master', ou toute branche cible
-  workflow_dispatch:  # permet de lancer manuellement
+  schedule:
+    - cron: '0 14 * * *'  # Tous les jours à 14h UTC (16h à Paris)
+  workflow_dispatch:  # option manuelle
 
 jobs:
   run-script:
@@ -17,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'  # adapte à ta version Python
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
