@@ -1,6 +1,7 @@
 from utils.finance_data import fetch_history, fetch_basic_info
 from utils.io_tools import load_csv, save_csv
 import pandas as pd
+import time
 
 class DailyRecap:
     def __init__(self, asset_file='data/raw/ActualAsset.csv', history_file='data/raw/History.csv', info_file='data/raw/informations.csv'):
@@ -15,6 +16,7 @@ class DailyRecap:
         for _, row in self.data.iterrows():
             hist = fetch_history(row['asset'], pd.to_datetime(row['date']), row['price'])
             all_historical.append(hist)
+            time.sleep(2)
 
         all_historical = pd.concat(all_historical, ignore_index=True)
         latest_dates = all_historical.groupby('ticket', as_index=False).agg({"Date": "max"}).rename(columns={"Date": "maxDate"})

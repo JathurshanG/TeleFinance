@@ -1,7 +1,4 @@
-from sklearn import random
 
-import pandas as pd 
-import numpy as np
 
 class pepareData():
     def __init__(self):
@@ -37,12 +34,6 @@ dataset = TimeSeriesDataSet(
 )
 
 
-from pytorch_forecasting import TemporalFusionTransformer
-from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
-import torch
-
-
 # DataLoader
 train_dataloader = dataset.to_dataloader(train=True, batch_size=64, num_workers=0)
 
@@ -53,7 +44,8 @@ tft = TemporalFusionTransformer.from_dataset(
     hidden_size=16,
     attention_head_size=1,
     dropout=0.1,
-    loss=torch.nn.MSELoss(),
+
+    loss= RMSE(),
     log_interval=10,
 )
 
