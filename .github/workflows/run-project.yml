@@ -1,28 +1,64 @@
-name: Run Daily at 16h Paris
+name: Update CSV File
 
 on:
-  schedule:
-    - cron: '0 14 * * *'  # Tous les jours à 14h UTC (16h à Paris)
-  workflow_dispatch:  # option manuelle
+  push:
+    branches:
+      - main  # Déclenche l'action sur un push dans la branche main
 
 jobs:
-  run-script:
+  update_csv:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.11'
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install pandas  # Si vous avez besoin de pandas pour générer le CSV
 
-      - name: Run main script
+      - name: Generate CSV and commit changes
         run: |
-          python script/__main__.py
+          # Votre script Python pour générer un fichier CSV
+          python generate_csv.py
+
+      - name: Commit CSV file to GitHub
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const path = './data/output.csv';  // Chemin du fichier CSV
+
+            // Lire le fichier généré
+            const fileContent = fs.readFileSync(path, 'utf8');
+
+            // Obtenir les informations du dépôt
+            const repo = context.repo;
+            const filePath = 'data/output.csv';  // Remplacez par le chemin souhaité dans le dépôt
+
+            // Vérifier si le fichier existe déjà
+            const { data: currentFile } = await github.rest.repos.getContent({
+              owner: repo.owner,
+              repo: repo.repo,
+              path: filePath
+            }).catch(() => null);  // Si le fichier n'existe pas, on le crée
+
+            const message = currentFile ? 'Update CSV file' : 'Create CSV file';
+
+            // Créer ou mettre à jour le fichier
+            await github.rest.repos.createOrUpdateFileContents({
+              owner: repo.owner,
+              repo: repo.repo,
+              path: filePath,
+              message: message,
+              content: Buffer.from(fileContent).toString('base64'),
+              sha: currentFile ? currentFile.sha : null,  // Mettre à jour le fichier si existant
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Utilisation du token GitHub généré par défaut
